@@ -1,0 +1,27 @@
+{
+  "name": "n8n-workflow-builder-agent",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Export-based n8n workflow builder agent tooling.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "check": "node --check scripts/deploy-workflow.mjs && node --check scripts/backup-workflow.mjs && node --check scripts/list-executions.mjs && node --check scripts/inspect-execution.mjs && node --check scripts/lib/n8n-api.mjs && node --check skill/scripts/validate-workflow.mjs && node --check skill/scripts/extract-node-shapes.mjs",
+    "validate": "node skill/scripts/validate-workflow.mjs",
+    "deploy": "node scripts/deploy-workflow.mjs",
+    "backup": "node scripts/backup-workflow.mjs",
+    "executions": "node scripts/list-executions.mjs",
+    "inspect": "node scripts/inspect-execution.mjs",
+    "shapes": "node skill/scripts/extract-node-shapes.mjs workflows"
+  },
+  "keywords": [
+    "n8n",
+    "workflow",
+    "automation",
+    "agent",
+    "json"
+  ],
+  "license": "MIT"
+}
