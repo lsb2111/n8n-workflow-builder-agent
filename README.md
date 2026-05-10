@@ -87,8 +87,12 @@ node scripts/backup-workflow.mjs --name "My Workflow"
 6. Deploy:
 
 ```bash
-node scripts/deploy-workflow.mjs workflows/my-workflow.json
+node scripts/deploy-workflow.mjs workflows/my-workflow.json --keep-creds
 ```
+
+Use `--keep-creds` when deploying a workflow exported from the same n8n
+instance back into that instance. Omit it for reusable templates or
+cross-instance deployment.
 
 7. Inspect failures:
 
@@ -108,9 +112,19 @@ Use `--activate` only when you really want the workflow enabled on the server.
 ## Security Notes
 
 - Credentials must already exist in n8n.
-- Deployment removes credential `id` fields from workflow nodes because IDs are environment-specific.
+- Deployment removes credential `id` fields from workflow nodes by default because IDs are environment-specific.
+- Use `--keep-creds` for same-instance self-hosted deployment so credential bindings do not get disconnected.
 - The validator warns about credential IDs and blocks common secret/token patterns.
 - Execution data may contain sensitive payloads. Be careful with `inspect-execution.mjs --json`.
+
+## Known Limitations
+
+- Self-hosted n8n workflow updates use `PUT /api/v1/workflows/:id`; `PATCH`
+  is not reliable across n8n versions.
+- Prefer HTTP Request with Slack Incoming Webhooks for Block Kit messages.
+  Native Slack node support for rich payloads can vary by n8n version.
+- For APIs not present in existing exports, such as Meta Marketing API, use
+  official API docs plus a real test call before finalizing node parameters.
 
 ## Agent Definition
 

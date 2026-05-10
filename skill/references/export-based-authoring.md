@@ -59,7 +59,9 @@ Use placeholder credential names that the user can remap after import:
 }
 ```
 
-If a real export contains credential IDs, remove them unless the user explicitly wants an environment-specific export.
+If a real export contains credential IDs, remove them for reusable templates.
+Keep them for same-instance self-hosted deployment when the workflow is being
+updated back into the n8n instance it came from.
 
 ## Code node style
 
@@ -101,8 +103,12 @@ Deploy with:
 N8N_URL=https://your-instance.n8n.cloud \
 N8N_API_KEY=n8n_api_xxxxx \
 node scripts/deploy-workflow.mjs \
-  workflows/<workflow>.json
+  workflows/<workflow>.json \
+  --keep-creds
 ```
+
+Use `--keep-creds` for same-instance self-hosted deployments. Omit it when the
+artifact is meant to be reusable across n8n instances.
 
 Add `--activate` only when the user explicitly wants the workflow activated after deployment.
 

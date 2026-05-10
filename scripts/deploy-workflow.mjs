@@ -12,21 +12,23 @@ const validatorPath = path.join(repoRoot, 'skill/scripts/validate-workflow.mjs')
 function usage() {
   console.error(`Usage:
   N8N_URL=https://your-instance.n8n.cloud N8N_API_KEY=n8n_api_xxx \\
-    node scripts/deploy-workflow.mjs <workflow.json> [--activate] [--name "Workflow Name"] [--dry-run]
+    node scripts/deploy-workflow.mjs <workflow.json> [--activate] [--name "Workflow Name"] [--dry-run] [--keep-creds]
 
 Options:
   --activate      Activate workflow after create/update.
   --dry-run       Validate and print payload summary without calling n8n API.
+  --keep-creds    Preserve credential IDs from the workflow export for same-instance deployment.
   --name <name>   Override workflow name used for lookup and deployment.
 `);
 }
 
 function parseArgs(argv) {
-  const args = { file: '', activate: false, dryRun: false, name: '' };
+  const args = { file: '', activate: false, dryRun: false, name: '', keepCreds: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--activate') args.activate = true;
     else if (arg === '--dry-run') args.dryRun = true;
+    else if (arg === '--keep-creds') args.keepCreds = true;
     else if (arg === '--name') {
       args.name = argv[i + 1] ?? '';
       i += 1;
@@ -68,10 +70,10 @@ function removeCredentialIds(node) {
   return { ...node, credentials };
 }
 
-function toDeployPayload(workflow, nameOverride) {
+function toDeployPayload(workflow, nameOverride, keepCreds = false) {
   const payload = {
     name: nameOverride || workflow.name,
-    nodes: (workflow.nodes ?? []).map(removeCredentialIds),
+    nodes: keepCreds ? (workflow.nodes ?? []) : (workflow.nodes ?? []).map(removeCredentialIds),
     connections: workflow.connections ?? {},
     settings: workflow.settings ?? {},
   };
@@ -102,7 +104,7 @@ async function main() {
   runValidator(file);
 
   const workflow = JSON.parse(fs.readFileSync(file, 'utf8'));
-  const payload = toDeployPayload(workflow, args.name);
+  const payload = toDeployPayload(workflow, args.name, args.keepCreds);
   if (!payload.name || !Array.isArray(payload.nodes)) {
     throw new Error('Invalid workflow payload');
   }
@@ -113,6 +115,7 @@ async function main() {
       name: payload.name,
       nodeCount: payload.nodes.length,
       connectionKeys: Object.keys(payload.connections),
+      credentialMode: args.keepCreds ? 'keep exported credential IDs' : 'strip credential IDs',
       activate: args.activate,
     }, null, 2));
     return;
@@ -121,7 +124,7 @@ async function main() {
   const existing = await findWorkflowByName(payload.name);
   let deployed;
   if (existing?.id) {
-    deployed = await n8nFetch('PATCH', `/api/v1/workflows/${existing.id}`, payload);
+    deployed = await n8nFetch('PUT', `/api/v1/workflows/${existing.id}`, payload);
     console.log(`[deploy-workflow] updated workflow: ${payload.name} (${existing.id})`);
   } else {
     deployed = await n8nFetch('POST', '/api/v1/workflows', payload);

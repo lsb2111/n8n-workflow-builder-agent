@@ -40,6 +40,7 @@ Load only the needed reference:
 - Export-first workflow authoring: `references/export-based-authoring.md`
 - Expressions and data access: `references/expressions-and-data.md`
 - Webhook/API workflows: `references/webhook-http-patterns.md`
+- API deployment and execution inspection: `references/api-deployment.md`
 - Custom node development: `references/custom-node-authoring.md`
 - Final review: `references/validation-checklist.md`
 
@@ -57,11 +58,13 @@ For unfamiliar built-in nodes, search the official n8n docs before generating fi
 - Before creating a node JSON, resolve its exact node syntax from existing exports, the local node shape catalog, or official n8n docs. Do not guess node parameters.
 - Use Code nodes only for transformations, aggregation, validation, or logic that is awkward in native nodes.
 - Use credentials placeholders, never real secrets.
+- For same-instance self-hosted deployment from an exported workflow, preserve credential IDs with `scripts/deploy-workflow.mjs --keep-creds` unless the user is creating a reusable template or cross-instance export.
 - Use environment variables only when the n8n instance is known to provide them.
 - Keep node names stable and unique. Connection keys must match node names exactly.
 - Prefer Webhook input -> validation -> action -> notification/logging.
 - When creating deployable workflows, generate or update a `.json` workflow artifact, not only prose.
 - Prefer cloning patterns from existing exported workflows in `workflows/`.
+- Prefer HTTP Request for Slack Block Kit messages; the native Slack node's Block Kit support can be ambiguous across n8n versions.
 
 ## Code node hard rules
 
@@ -96,9 +99,37 @@ For unfamiliar built-in nodes, search the official n8n docs before generating fi
 3. Reuse known-good exported node shapes from existing workflows when possible.
 4. Resolve any unknown node syntax through official docs or a user-provided export.
 5. Generate the workflow JSON file.
-6. Run `node .claude/skills/n8n-workflow-builder/scripts/validate-workflow.mjs <workflow.json>`.
+6. Run `node skill/scripts/validate-workflow.mjs <workflow.json>`.
 7. Fix validation failures before finalizing.
-8. In the final answer, give import/test steps, credential setup notes, and node syntax sources.
+8. If deployment or execution testing is requested, use `deploy-workflow.mjs`, `backup-workflow.mjs`, `list-executions.mjs`, and `inspect-execution.mjs` only when `N8N_URL` and `N8N_API_KEY` are available.
+9. In the final answer, give import/test steps, credential setup notes, node syntax sources, and which checks were run.
+
+## Agent tool scripts
+
+Run scripts from the repository root unless noted otherwise.
+
+Validation:
+
+`node skill/scripts/validate-workflow.mjs workflows/my-workflow.json`
+
+Node shape extraction:
+
+`node skill/scripts/extract-node-shapes.mjs workflows`
+
+API deploy dry-run:
+
+`node scripts/deploy-workflow.mjs workflows/my-workflow.json --dry-run`
+
+Same-instance API deploy while preserving existing credential bindings:
+
+`node scripts/deploy-workflow.mjs workflows/my-workflow.json --keep-creds`
+
+## Operation mode selection
+
+- Prefer API mode for self-hosted n8n or n8n plans with Public API access.
+- Use `--keep-creds` for self-hosted n8n deployments that update a workflow exported from the same instance.
+- Omit `--keep-creds` for reusable templates or cross-instance deployments.
+- Never paste or store credentials in workflow JSON, scripts, logs, screenshots, or final answers.
 
 ## Final response
 

@@ -16,4 +16,10 @@ Use exported node shapes as the preferred source for:
 - `credentials`
 - connection shape
 
+Slack note:
+
+- Use native Slack node shapes only for simple text notifications.
+- For Block Kit or richer Slack reports, prefer `n8n-nodes-base.httpRequest`
+  with Slack Incoming Webhook JSON.
+
 For any node not represented in local exports, do not guess. Resolve syntax using `node-syntax-resolution.md`.

@@ -47,6 +47,15 @@ return items.map((item) => {
 - Put API keys in n8n credentials, not literal headers.
 - If returning workflow JSON, describe credential setup separately.
 
+## Known limitations
+
+- Prefer HTTP Request with an Incoming Webhook for Slack Block Kit messages.
+  Native Slack node support for rich Block Kit payloads can be unclear across
+  n8n versions, while HTTP Request maps directly to Slack's webhook JSON shape.
+- For APIs not represented in existing exports, such as Facebook Graph API /
+  Meta Marketing API, build the node shape from official API docs plus a real
+  test call. Do not invent request parameters or response parsing.
+
 ## Useful workflow patterns
 
 - Feedback webhook -> classify -> GitHub issue
