@@ -41,6 +41,7 @@ Load only the needed reference:
 - Expressions and data access: `references/expressions-and-data.md`
 - Webhook/API workflows: `references/webhook-http-patterns.md`
 - API deployment and execution inspection: `references/api-deployment.md`
+- Preflight requirements before implementation: `references/preflight-requirements.md`
 - Custom node development: `references/custom-node-authoring.md`
 - Final review: `references/validation-checklist.md`
 
@@ -94,6 +95,7 @@ For unfamiliar built-in nodes, search the official n8n docs before generating fi
 
 ## Build workflow
 
+0. Run the preflight requirements step before implementation. Read `references/preflight-requirements.md`, identify required credentials/keys/permissions, and either confirm they exist or ask the user to create/provide them. Do not generate deployable workflow JSON until required runtime credentials and test inputs are known, unless the user explicitly asks for a skeleton/template.
 1. Read any user-provided export JSON and identify node types, type versions, credentials shape, and connection shape.
 2. Run or consult `extract-node-shapes.mjs` for existing node shapes.
 3. Reuse known-good exported node shapes from existing workflows when possible.
@@ -137,6 +139,7 @@ Include:
 
 - What artifact was created or changed
 - Any credentials/env vars the user must configure
+- Any preflight requirements that were confirmed or are still missing
 - How to import or test it in n8n
 - Known assumptions
 

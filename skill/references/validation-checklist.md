@@ -4,6 +4,8 @@ Use before finalizing any n8n artifact.
 
 ## Workflow JSON
 
+- Preflight requirements were collected before implementation.
+- Missing credentials, keys, permissions, resource IDs, and test inputs are listed instead of guessed.
 - `name`, `nodes`, `connections`, and `settings` exist.
 - Workflow file is written under `workflows/` when the user asks for a deployable workflow.
 - Node names are unique.
