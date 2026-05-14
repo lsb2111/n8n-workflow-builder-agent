@@ -97,9 +97,9 @@ For unfamiliar built-in nodes, search the official n8n docs before generating fi
 
 0. Run the preflight requirements step before implementation. Read `references/preflight-requirements.md`, identify required credentials/keys/permissions, and either confirm they exist or ask the user to create/provide them. Do not generate deployable workflow JSON until required runtime credentials and test inputs are known, unless the user explicitly asks for a skeleton/template.
 1. Read any user-provided export JSON and identify node types, type versions, credentials shape, and connection shape.
-2. Run or consult `extract-node-shapes.mjs` for existing node shapes.
-3. Reuse known-good exported node shapes from existing workflows when possible.
-4. Resolve any unknown node syntax through official docs or a user-provided export.
+2. If existing workflow exports are available, run or consult `extract-node-shapes.mjs` and reuse known-good node shapes automatically.
+3. If no matching export shape exists, resolve the node syntax through official n8n docs or a small user-provided test export.
+4. Do not treat shape extraction as mandatory when there are no useful local exports; move to official docs/test export instead.
 5. Generate the workflow JSON file.
 6. Run `node skill/scripts/validate-workflow.mjs <workflow.json>`.
 7. Fix validation failures before finalizing.
@@ -114,7 +114,7 @@ Validation:
 
 `node skill/scripts/validate-workflow.mjs workflows/my-workflow.json`
 
-Node shape extraction:
+Node shape reference from existing exports:
 
 `node skill/scripts/extract-node-shapes.mjs workflows`
 

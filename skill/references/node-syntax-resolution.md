@@ -17,11 +17,10 @@ For each node type in the workflow, Claude must obtain a known-good shape from o
 ## Recommended workflow
 
 1. List required nodes and their exact `type` names.
-2. Run the extractor against existing exports:
+2. If existing exports are available, run the extractor against them:
 
 ```bash
-node .claude/skills/n8n-workflow-builder/scripts/extract-node-shapes.mjs \
-  workflows
+node skill/scripts/extract-node-shapes.mjs workflows
 ```
 
 3. Check whether the needed `type` exists in the output.
@@ -33,6 +32,9 @@ node .claude/skills/n8n-workflow-builder/scripts/extract-node-shapes.mjs \
    - common expression format
 5. If not found, consult official n8n docs for that built-in node.
 6. If the docs do not expose enough JSON detail, ask the user for a small exported workflow containing that node.
+
+Shape extraction is a shortcut for reusing known-good local exports, not a
+requirement when no relevant exports exist.
 
 ## Good output discipline
 

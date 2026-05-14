@@ -16,7 +16,7 @@ Use before finalizing any n8n artifact.
 - Credentials are placeholders or omitted.
 - No real API keys, tokens, passwords, or private URLs are embedded.
 - Required manual setup steps are listed.
-- `node .claude/skills/n8n-workflow-builder/scripts/validate-workflow.mjs <workflow.json>` passes.
+- `node skill/scripts/validate-workflow.mjs <workflow.json>` passes.
 
 ## Code node
 

@@ -3,11 +3,12 @@
 n8n workflow JSON을 **생성, 검증, 배포, 백업, 실행 기록 분석**까지 이어서 처리하기 위한 에이전트형 도구 모음입니다.
 
 이 레포는 AI가 n8n workflow를 만들 때 자주 틀리는 부분을 줄이기 위해 만들었습니다.
-노드 파라미터를 추측하지 않고, 기존 n8n export에서 실제 node shape를 추출한 뒤 검증 스크립트와 n8n API 스크립트로 `작성 → 검증 → 배포 → 실행 결과 확인 → 수정` 루프를 돕습니다.
+노드 파라미터를 추측하지 않고, 기존 n8n export가 있으면 실제 node shape를 참고하고, 없으면 공식 문서나 작은 테스트 export로 형태를 확인한 뒤 `작성 → 검증 → 배포 → 실행 결과 확인 → 수정` 루프를 돕습니다.
 
 ## 할 수 있는 일
 
-- 기존 n8n export에서 node parameter shape 추출
+- 기존 n8n export에서 node parameter shape 자동 참고
+- 기존 export에 없는 node는 공식 문서 또는 작은 테스트 export를 기반으로 형태 확인
 - workflow JSON 구조와 connection 참조 검증
 - workflow 이름 기준으로 n8n 인스턴스에 create/update 배포
 - n8n 서버의 workflow 백업
@@ -55,11 +56,13 @@ backups/
 
 1. n8n에서 export한 workflow JSON 또는 생성한 workflow JSON을 `workflows/` 아래에 둡니다.
 
-2. 기존 workflow에서 node shape를 추출합니다.
+2. 기존 workflow export가 있다면 node shape를 참고합니다.
 
 ```bash
 node skill/scripts/extract-node-shapes.mjs workflows
 ```
+
+이 단계는 필수 선행 작업이라기보다, 이미 갖고 있는 export를 재사용하기 위한 참고 절차입니다. 기존 export에 원하는 node type이 없으면 공식 n8n 문서나 작은 테스트 workflow export로 node 형태를 확인합니다.
 
 예제 workflow로 먼저 동작을 확인할 수도 있습니다.
 
@@ -145,7 +148,7 @@ AI 에이전트가 workflow JSON을 만들기 전에 먼저 확인해야 하는 
 이 레포에서 말하는 에이전트는 아래 요소들의 조합입니다.
 
 - `skill/SKILL.md`: workflow 작성 절차와 guardrail
-- `skill/scripts/extract-node-shapes.mjs`: 실제 export에서 node syntax 추출
+- `skill/scripts/extract-node-shapes.mjs`: 기존 export에서 node syntax 참고 자료 추출
 - `skill/scripts/validate-workflow.mjs`: workflow JSON 정적 검증
 - `scripts/*.mjs`: n8n API 기반 배포, 백업, execution 분석 도구
 
